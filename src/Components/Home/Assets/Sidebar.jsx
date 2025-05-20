@@ -35,7 +35,6 @@ function Sidebar() {
         }
     }
   
-  console.log(side)
   return (
       <main className="nevedelier">
             {Object.keys(side).map((row, ind) => (

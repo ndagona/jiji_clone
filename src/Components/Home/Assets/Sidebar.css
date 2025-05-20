@@ -1,0 +1,30 @@
+.nevedelier {
+    height: 55%;
+    background-color:white;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 400px;
+    border-radius: 5px 20px 5px 40px;
+    box-shadow: 1px 1px 1px inset rgba(248, 248, 248, 0.3);
+    cursor:grab;
+    padding-left: 15px;
+}
+
+.side_ic {
+    width: 50px;
+    aspect-ratio: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+}
+
+.side_ic:hover {
+        box-shadow: 1px 3px 3px 1px rgba(17, 46, 1, 0.3);
+
+}
+.side_ic > img {
+    width: 30px;
+}

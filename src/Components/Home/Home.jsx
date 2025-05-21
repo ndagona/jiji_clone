@@ -4,14 +4,18 @@ import jiji_icon from './Assets/Icons/jiji.png';
 import searchIcon from './Assets/Icons/search.png';
 import Sidebar from './Assets/Sidebar';
 import backicon from './Assets/Icons/back.png';
-import { useNavigate } from 'react-router-dom';
-//import axios from 'axios';
+import foward from './Assets/Icons/foward.png';
+import notfoward from './Assets/Icons/kon.png';
 
 function Home() {
   const [searchkey, setSearchkey] = useState();
    const [products, setProducts] = useState([]);
    const [visi, setVisi] = useState(false)
    const [currentProd, setCurrentprod] = useState()
+   const [categories, setCategories] = useState()
+   const [currentCat, setCurrentCat] = useState()
+   const [range, setRange] = useState([1,64])
+
   const handleChange = (e) => {
     const cap = (word) => {
         return `${word.slice(0,1).toUpperCase()}${word.slice(1,).toLowerCase()}`
@@ -23,10 +27,14 @@ function Home() {
    useEffect(() => {
     async function fetchProducts() {
       try {
-        const response = await fetch('https://dummyjson.com/products');
+        const response = await fetch('https://dummyjson.com/products?limit=0');
         const data = await response.json();
         setProducts(data.products);
         
+        const resp = await fetch('https://dummyjson.com/products/categories');
+        const datar = await resp.json();
+        setCategories(datar)
+
       } catch (error) {
         console.error('Error fetching products:', error);
       } finally {
@@ -39,6 +47,27 @@ function Home() {
   }, []);
 
 
+    useEffect(() => {
+      console.log("Was called")
+      console.log(currentCat)
+      async function fetchProductss() {
+      try {
+        const responses = await fetch(currentCat);
+        const datam = await responses.json();
+        console.log('actual')
+        const actual = datam.products
+        console.log(actual)
+        setProducts(actual);       
+            } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        
+      }
+    }
+
+    fetchProductss();
+    },[currentCat])
+
 
   const handleProClick = (row) => {
       setVisi(true)
@@ -46,12 +75,23 @@ function Home() {
     
   }
 
+  const handleNext = () => {
+
+  }
+
+  const handleCat = (link) => {
+    console.log(link)
+    setCurrentCat(link)
+  }
+
   return (
     <main className="home">
         <nav className="topnav">
-            <section className="jiji_header">
-                <img src={jiji_icon} alt="Website Icon" />
-            </section>
+
+            <a className="jiji_header"  href="http://localhost:3000/">               
+                 <img src={jiji_icon} alt="Website Icon" />                
+            </a>
+        
             <section className="searchbarhome">
                 <input type="text" className="search_input_home" placeholder='Search' value={searchkey} onChange={e => {handleChange(e)}}/>
                 <section className="search_button">
@@ -62,7 +102,13 @@ function Home() {
         </nav>
 
         <nav className="sidenav">
-
+            {categories && categories.length > 0 && 
+              categories.map((row, ind) => (
+                <section className="cat" onClick={() => {handleCat(row['url'])}} key={`Cate ${ind}`}>{
+                  row['name']
+                }</section>
+              ))
+            }
         </nav>
 
         {!visi && <main className="placement">
@@ -83,11 +129,24 @@ function Home() {
                     <span>{`${products[row]['price']} $`}</span>
                     <span>{`Rating ${products[row]['rating']}`}</span>
                   </p>
+                 
                   </article>
                 ))
                }
+               
         </main>
-        }{visi && <main className="placementa" >
+        }
+        
+          {!visi && 
+         <section className="next_episode">
+              <p className="next"
+              onClick={() => {}}
+              ><img src={foward} alt="" /></p>
+              <p className="next"><img src={notfoward} alt="" /></p>
+         </section>
+        }
+        
+        {visi && <main className="placementa" >
           <section className="topaz">
           <section className="display_images">
             <section className="back_button"  
@@ -114,7 +173,10 @@ function Home() {
             </section>
           </section>
           </section>
-        </main> }
+        </main>      
+        
+        }
+      
     </main>
   )
 }

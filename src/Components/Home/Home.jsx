@@ -3,11 +3,15 @@ import './Home.css';
 import jiji_icon from './Assets/Icons/jiji.png';
 import searchIcon from './Assets/Icons/search.png';
 import Sidebar from './Assets/Sidebar';
+import backicon from './Assets/Icons/back.png';
+import { useNavigate } from 'react-router-dom';
 //import axios from 'axios';
 
 function Home() {
   const [searchkey, setSearchkey] = useState();
    const [products, setProducts] = useState([]);
+   const [visi, setVisi] = useState(false)
+   const [currentProd, setCurrentprod] = useState()
   const handleChange = (e) => {
     const cap = (word) => {
         return `${word.slice(0,1).toUpperCase()}${word.slice(1,).toLowerCase()}`
@@ -34,10 +38,13 @@ function Home() {
 
   }, []);
 
-  useEffect(() => {
-        console.log("Products below")
-        console.log(products)
-  },[products])
+
+
+  const handleProClick = (row) => {
+      setVisi(true)
+      setCurrentprod(products[row])
+    
+  }
 
   return (
     <main className="home">
@@ -58,10 +65,18 @@ function Home() {
 
         </nav>
 
-        <main className="placement">
+        {!visi && <main className="placement">
                {Object.keys(products).length > 0 && 
-                Object.keys(products).map((row, ind) => (
-                  <article className='product' key={`product single ${ind}`}>
+                Object.keys(products).filter((row) => {
+                  if(searchkey==="" || searchkey == undefined) return row
+                  const lookup = searchkey.toString().toLowerCase()
+                  const vlook = products[row]['title'].toString().toLowerCase()
+                  if(vlook.includes(lookup)) return row
+                }).map((row, ind) => (
+                  <article className='product' key={`product single ${ind}` }
+                  
+                  onClick={() => {handleProClick(row); }}
+                  >
                     <img src={products[row]['thumbnail']} alt="" />
                   <p className="product_name">{products[row]['title']}</p>
                   <p className="misc">
@@ -72,6 +87,34 @@ function Home() {
                 ))
                }
         </main>
+        }{visi && <main className="placementa" >
+          <section className="topaz">
+          <section className="display_images">
+            <section className="back_button"  
+            onClick={() => {
+              setVisi(false)
+            }}
+            >
+              <img src={backicon} alt="" />
+            </section>
+            <img src={currentProd['images'][0]} alt="" />
+          </section>
+          <section className="descrip">
+            <p className="title_name">{currentProd['title']}</p>
+            <p className="desc_name">{currentProd['description']}</p>
+            <section className="import">
+              <p className="pricing"><span className="hmm">Current Price</span><span className="yoo">{`$ ${currentProd['price']}`}</span></p>
+              <p className="pricing"><span className="hmm">Rating</span><span className="yoo">{`${currentProd['rating']}`}</span></p>
+              <p className="pricing"><span className="hmm">Available Stock</span><span className="yoo">{`${currentProd['stock']}`}</span></p>
+            </section>
+            <section className="seller_info">
+              <p className="storname">Store Name</p>
+              <p className="location">Location</p>
+              <p className="contanct">0439348349834</p>
+            </section>
+          </section>
+          </section>
+        </main> }
     </main>
   )
 }
